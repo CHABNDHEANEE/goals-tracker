@@ -1,2 +1,2 @@
-# java-kanban
-Repository for homework project.
+# Task Tracker
+Программа для добавления, изменения и отслеживание целей. 
