@@ -1,4 +1,4 @@
-import Tasks.*;
+import tasks.*;
 
 import java.util.HashMap;
 
