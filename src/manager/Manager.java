@@ -49,6 +49,7 @@ public class Manager {
         for (Epic epic :
                 epics.values()) {
             epic.clearSubtasks();
+            setStatus(epic.getUid());
         }
     }   // Удаляем все сабтаски
 
