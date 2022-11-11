@@ -1,7 +1,5 @@
 package tasks;
 
-import manager.Manager;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,7 +7,6 @@ public class Epic extends Task{
 
 
     ArrayList<Integer> subtasksId;
-    Manager manager;
 
     public Epic(String name, String description, int uid, String status) {
         super(name, description);
@@ -21,7 +18,6 @@ public class Epic extends Task{
         this.name = name;
         this.description = description;
         subtasksId = new ArrayList<>();
-        manager = new Manager();
     }
 
     public void addSubtaskId(Subtask subtask) {
