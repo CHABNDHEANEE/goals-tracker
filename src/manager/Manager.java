@@ -1,5 +1,8 @@
+package manager;
+
 import tasks.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
@@ -15,32 +18,44 @@ public class Manager {
         uid = 0;
     }
 
-    public void createTask(Task task) {
+    public Integer createTask(Task task) {
         task.setUid(uid);
         tasks.put(uid, task);
-        uid++;
+        return uid++;
     }   // Создаем таск
 
-    public void createSubtask(Subtask subtask) {
+    public Integer createSubtask(Subtask subtask) {
         subtask.setUid(uid);    // Добавляем юид сабтаска
         Integer uidOfEpic = subtask.getUidOfEpic(); // Получаем юид эпика
-        epics.get(uidOfEpic).setSubtask(subtask);  // Привязываем сабтаск к эпику
+        if (!epics.containsKey(uidOfEpic)) return null;
         subtasks.put(uid, subtask); // добавляем сабтаск в список
-        epics.get(uidOfEpic).checkStatus(); // Обновляем статус эпика
-        uid++; //Увеличиваем юид
+        epics.get(uidOfEpic).addSubtaskId(subtask);  // Привязываем сабтаск к эпику
+        epics.get(uidOfEpic).setStatus(subtasks); // Обновляем статус эпика
+        return uid++; //Увеличиваем юид
     }   // Создаем сабтаск
 
-    public void createEpic(Epic epic) {
+    public Integer createEpic(Epic epic) {
         epic.setUid(uid);
         epics.put(uid, epic);
-        uid++;
+        return uid++;
     }   // Создаем эпик
 
     public void deleteAllTasks() {
         tasks.clear();
-        subtasks.clear();
-        epics.clear();
     }   // Удаляем все таски, сабтаски и эпики
+
+    public void deleteAllSubtasks() {
+        subtasks.clear();
+        for (Epic epic :
+                epics.values()) {
+            epic.clearSubtasks();
+        }
+    }   // Удаляем все сабтаски
+
+    public void deleteAllEpics() {
+        epics.clear();
+        subtasks.clear();   // Вместе с эпиками, соответственно удаляются и сабтаски.
+    }   // Удаляем эпики
 
     public void deleteTaskById(Integer id) {
         tasks.remove(id);
@@ -48,24 +63,28 @@ public class Manager {
 
     public void deleteSubtaskById(Integer id) {
         Subtask subtask = subtasks.get(id);
-        epics.get(subtask.getUidOfEpic()).checkStatus();  // Обновляем статус эпика
+        int uidOfEpic = subtask.getUidOfEpic();
+        int uid = subtask.getUid();
+        epics.get(uidOfEpic).deleteSubtask(uid);
+        epics.get(subtask.getUidOfEpic()).setStatus(subtasks);  // Обновляем статус эпика
         subtasks.remove(id);
     }   // Удаляем сабтаск по айди
 
     public void deleteEpicById(Integer id) {
+        epics.get(id).clearSubtasks();
         epics.remove(id);
     }   // Удаляем эпик по айди
 
-    public HashMap<Integer, Task> getAllTasks() {
-        return tasks;
+    public ArrayList<Task> getTasks() {
+        return new ArrayList<>(tasks.values());
     }   // Получаем список тасков
 
-    public HashMap<Integer, Subtask> getAllSubtasks() {
-        return subtasks;
+    public ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<>(subtasks.values());
     }   // Получаем список сабтасков
 
-    public HashMap<Integer, Epic> getAllEpics() {
-        return epics;
+    public ArrayList<Epic> getEpics() {
+        return new ArrayList<>(epics.values());
     }   // Получаем список эпиков
 
     public Task getTaskById(Integer id) {
@@ -81,20 +100,28 @@ public class Manager {
     }   // Получаем эпик по айди
 
     public void updateTask(Task task) {
+        if (!tasks.containsValue(task)) return;
         tasks.put(task.getUid(), task);
     }   // Обновляем таск
 
     public void updateSubtask(Subtask subtask) {
-        subtasks.put(subtask.getUid(), subtask);
-        epics.get(subtask.getUidOfEpic()).checkStatus();    // Обновляем статус эпика
+        int uid = subtask.getUid();
+        int uidOfEpic = subtask.getUidOfEpic();
+        if (!subtasks.containsKey(uid) && !epics.containsKey(uidOfEpic)) return;
+        subtasks.put(uid, subtask);
+        epics.get(uidOfEpic).setStatus(subtasks);    // Обновляем статус эпика
     }   // Обновляем сабтаск
 
     public void updateEpic(Epic epic) {
         epics.put(epic.getUid(), epic);
     }   // Обновляем эпик
 
-    public HashMap<Integer, Subtask> getAllSubtasksOfEpic(Epic epic) {
-        return epic.getSubtasks();
+    public ArrayList<Integer> getAllSubtasksOfEpic(int epicId) {
+        if (!isEpicExists(epicId)) return null;
+        return epics.get(epicId).getSubtasks();
     }   // Получаем список всех сабтасков эпика
 
+    private boolean isEpicExists(int uid) {
+        return epics.containsKey(uid);
+    }   // Проверяем существование эпика
 }
