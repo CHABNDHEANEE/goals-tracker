@@ -28,34 +28,6 @@ public class Epic extends Task{
         return subtasksId;
     }
 
-    public void setStatus(HashMap<Integer, Subtask> subtasks) {
-        if (subtasksId.isEmpty()) {
-            this.status = "NEW";
-            return;
-        }
-
-        boolean isNew = true;
-        boolean isDone = true;
-
-        for (Integer id : subtasksId) {
-            Subtask subtask = subtasks.get(id);
-            if (subtask.getStatus().equals("NEW")) {
-                isNew = false;
-            } else if (subtask.getStatus().equals("DONE")) {
-                isDone = false;
-            }
-            if (!isNew && !isDone) break;
-        }
-
-        if (isDone) {
-            this.status = "DONE";
-        } else if (isNew) {
-            this.status = "NEW";
-        } else {
-            this.status = "IN_PROGRESS";
-        }
-    }
-
     public void deleteSubtask(int uid) {
         subtasksId.remove(uid);
     }
