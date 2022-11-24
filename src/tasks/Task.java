@@ -6,13 +6,13 @@ public class Task {
     String name;
     String description;
     int uid;
-    String status;
+    Status status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.uid = 0;
-        this.status = "NEW";
+        this.status = Status.NEW;
     }
     @Override
     public String toString() {
@@ -25,7 +25,7 @@ public class Task {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = Status.valueOf(status);
     }
 
     public void setUid(int uid) {
@@ -52,7 +52,7 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 

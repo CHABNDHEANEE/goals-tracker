@@ -5,25 +5,28 @@ import tasks.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
     HashMap<Integer, Task> tasks;
     HashMap<Integer, Subtask> subtasks;
     HashMap<Integer, Epic> epics;
     Integer uid;
 
-    public Manager() {
+
+    public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subtasks = new HashMap<>();
         epics = new HashMap<>();
         uid = 0;
     }
 
+    @Override
     public Integer createTask(Task task) {
         task.setUid(uid);
         tasks.put(uid, task);
         return uid++;
     }   // Создаем таск
 
+    @Override
     public Integer createSubtask(Subtask subtask) {
         subtask.setUid(uid);    // Добавляем юид сабтаска
         Integer uidOfEpic = subtask.getUidOfEpic(); // Получаем юид эпика
@@ -34,16 +37,19 @@ public class Manager {
         return uid++; //Увеличиваем юид
     }   // Создаем сабтаск
 
+    @Override
     public Integer createEpic(Epic epic) {
         epic.setUid(uid);
         epics.put(uid, epic);
         return uid++;
     }   // Создаем эпик
 
+    @Override
     public void deleteAllTasks() {
         tasks.clear();
     }   // Удаляем все таски, сабтаски и эпики
 
+    @Override
     public void deleteAllSubtasks() {
         subtasks.clear();
         for (Epic epic :
@@ -53,15 +59,18 @@ public class Manager {
         }
     }   // Удаляем все сабтаски
 
+    @Override
     public void deleteAllEpics() {
         epics.clear();
         subtasks.clear();   // Вместе с эпиками, соответственно удаляются и сабтаски.
     }   // Удаляем эпики
 
+    @Override
     public void deleteTaskById(Integer id) {
         tasks.remove(id);
     }   // Удаляем таск по айди
 
+    @Override
     public void deleteSubtaskById(Integer id) {
         Subtask subtask = subtasks.get(id);
         int uidOfEpic = subtask.getUidOfEpic();
@@ -71,41 +80,56 @@ public class Manager {
         subtasks.remove(id);
     }   // Удаляем сабтаск по айди
 
+    @Override
     public void deleteEpicById(Integer id) {
         epics.get(id).clearSubtasks();
         epics.remove(id);
     }   // Удаляем эпик по айди
 
+    @Override
     public ArrayList<Task> getTasks() {
         return new ArrayList<>(tasks.values());
     }   // Получаем список тасков
 
+    @Override
     public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(subtasks.values());
     }   // Получаем список сабтасков
 
+    @Override
     public ArrayList<Epic> getEpics() {
         return new ArrayList<>(epics.values());
     }   // Получаем список эпиков
 
+    @Override
     public Task getTaskById(Integer id) {
-        return tasks.get(id);
+        Task task = tasks.get(id);
+        InMemoryHistoryManager.add(task);
+        return task;
     }   // Получаем таск по его айди
 
+    @Override
     public Subtask getSubtaskById(Integer id) {
-        return subtasks.get(id);
+        Subtask subtask = subtasks.get(id);
+        InMemoryHistoryManager.add(subtask);
+        return subtask;
     }   // Получаем сабтаск по айди
 
+    @Override
     public Epic getEpicById(Integer id) {
-        return epics.get(id);
+        Epic epic = epics.get(id);
+        InMemoryHistoryManager.add(epic);
+        return epic;
     }   // Получаем эпик по айди
 
+    @Override
     public void updateTask(Task task) {
         int id = task.getUid();
         if (!isTaskExists(id)) return;
         tasks.put(id, task);
     }   // Обновляем таск
 
+    @Override
     public void updateSubtask(Subtask subtask) {
         int uid = subtask.getUid();
         int uidOfEpic = subtask.getUidOfEpic();
@@ -114,11 +138,13 @@ public class Manager {
         setStatus(uidOfEpic);    // Обновляем статус эпика
     }   // Обновляем сабтаск
 
+    @Override
     public void updateEpic(Epic epic) {
         if (!isEpicExists(epic.getUid())) return;
         epics.put(epic.getUid(), epic);
     }   // Обновляем эпик
 
+    @Override
     public ArrayList<Subtask> getAllSubtasksOfEpic(int epicId) {
         if (!isEpicExists(epicId)) return null;
         ArrayList<Subtask> result = new ArrayList<>();
