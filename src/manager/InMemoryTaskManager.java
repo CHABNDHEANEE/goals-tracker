@@ -4,12 +4,14 @@ import tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class InMemoryTaskManager implements TaskManager {
-    HashMap<Integer, Task> tasks;
-    HashMap<Integer, Subtask> subtasks;
-    HashMap<Integer, Epic> epics;
-    Integer uid;
+    private final HashMap<Integer, Task> tasks;
+    private final HashMap<Integer, Subtask> subtasks;
+    private final HashMap<Integer, Epic> epics;
+    private Integer uid;
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
 
     public InMemoryTaskManager() {
@@ -104,21 +106,21 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(Integer id) {
         Task task = tasks.get(id);
-        InMemoryHistoryManager.add(task);
+        historyManager.addTask(task);
         return task;
     }   // Получаем таск по его айди
 
     @Override
     public Subtask getSubtaskById(Integer id) {
         Subtask subtask = subtasks.get(id);
-        InMemoryHistoryManager.add(subtask);
+        historyManager.addTask(subtask);
         return subtask;
     }   // Получаем сабтаск по айди
 
     @Override
     public Epic getEpicById(Integer id) {
         Epic epic = epics.get(id);
-        InMemoryHistoryManager.add(epic);
+        historyManager.addTask(epic);
         return epic;
     }   // Получаем эпик по айди
 
@@ -193,5 +195,10 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus("IN_PROGRESS");
         }
+    }
+
+    @Override
+    public LinkedList<Task> getHistory() {
+        return historyManager.getHistory();
     }
 }
