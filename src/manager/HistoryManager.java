@@ -2,10 +2,11 @@ package manager;
 
 import tasks.Task;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 interface HistoryManager {
 
     void addTask(Task task);
-    LinkedList<Task> getHistory();
+    void remove(int id);
+    ArrayList<Task> getHistory();
 }

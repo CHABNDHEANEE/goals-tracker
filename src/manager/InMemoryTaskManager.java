@@ -4,7 +4,6 @@ import tasks.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks;
@@ -70,6 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskById(Integer id) {
         tasks.remove(id);
+        historyManager.remove(id);
     }   // Удаляем таск по айди
 
     @Override
@@ -80,12 +80,17 @@ public class InMemoryTaskManager implements TaskManager {
         epics.get(uidOfEpic).deleteSubtask(uid);
         setStatus(uidOfEpic);  // Обновляем статус эпика
         subtasks.remove(id);
+        historyManager.remove(id);
     }   // Удаляем сабтаск по айди
 
     @Override
     public void deleteEpicById(Integer id) {
+        for (Task task : getAllSubtasksOfEpic(id)) {
+            historyManager.remove(task.getUid());
+        }
         epics.get(id).clearSubtasks();
         epics.remove(id);
+        historyManager.remove(id);
     }   // Удаляем эпик по айди
 
     @Override
@@ -198,7 +203,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public LinkedList<Task> getHistory() {
+    public ArrayList<Task> getHistory() {
         return historyManager.getHistory();
     }
 }
