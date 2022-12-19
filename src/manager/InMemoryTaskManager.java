@@ -1,6 +1,6 @@
 package manager;
 
-import tasks.*;
+import task.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,13 +10,14 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtasks;
     private final HashMap<Integer, Epic> epics;
     private Integer uid;
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager;
 
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         subtasks = new HashMap<>();
         epics = new HashMap<>();
+        historyManager = Managers.getDefaultHistory();
         uid = 0;
     }
 
