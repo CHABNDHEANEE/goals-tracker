@@ -1,5 +1,7 @@
 package task;
 
+import manager.TaskType;
+
 import java.util.Objects;
 
 public class Task {
@@ -7,21 +9,39 @@ public class Task {
     protected String description;
     protected int uid;
     protected Status status;
+    protected TaskType taskType;
+
+    public Task(int uid, TaskType taskType, String name, Status status, String description) {
+        this.uid = uid;
+        this.taskType = taskType;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+    }
+
+    public Task(String name, String description, TaskType taskType) {
+        this.name = name;
+        this.description = description;
+        this.uid = 0;
+        this.status = Status.NEW;
+        this.taskType = taskType;
+    }
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.uid = 0;
         this.status = Status.NEW;
+        this.taskType = TaskType.TASK;
     }
+
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", bio='" + description + '\'' +
-                ", uid=" + uid +
-                ", status='" + status + '\'' +
-                '}';
+        return getUid() + "," + taskType + "," + name + "," + status + "," + description;
     }
 
     public void setStatus(String status) {
