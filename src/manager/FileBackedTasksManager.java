@@ -13,37 +13,45 @@ import java.util.Map.Entry;
 
 import java.util.ArrayList;
 
+//import static manager.CSVTaskFormat.*;
+
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
     public static void main(String[] args) {
-//        TaskManager taskManager = Managers.getDefaultWithSaves();
+//        testSaving();
+        testLoading();
+    }
+
+    static void testSaving() {
+        TaskManager taskManager = Managers.getDefaultWithSaves();
 
 
-//        Epic epic1 = new Epic("Переезд", "Заняться переездом.");
-//        taskManager.createEpic(epic1);
-//
-//        Subtask subtask1 = new Subtask("Упаковать вещи", "Разложить вещи по коробкам.", epic1.getUid());
-//        Subtask subtask2 = new Subtask("Перевезти вещи", "Увезти все вещи.", epic1.getUid());
-//        Subtask subtask3 = new Subtask("Распаковать вещи", "Распаковать их.", epic1.getUid());
-//        taskManager.createSubtask(subtask1);
-//        taskManager.createSubtask(subtask2);
-//        taskManager.createSubtask(subtask3);
-//
-//        Epic epic2 = new Epic("Пополнить запасы", "Сходить в магазин за продуктами.");
-//        taskManager.createEpic(epic2);
-//
-//
-//        System.out.println(taskManager.getEpicById(0));
-//        System.out.println(taskManager.getEpicById(4));
-//        System.out.println(taskManager.getSubtaskById(2));
-//        System.out.println(taskManager.getEpicById(0));
-//
-//        System.out.println(taskManager.getHistory());
-//        taskManager.deleteEpicById(0);
-//        System.out.println(taskManager.getHistory());
+        Epic epic1 = new Epic("Переезд", "Заняться переездом.");
+        taskManager.createEpic(epic1);
 
-//        taskManager.save();
+        Subtask subtask1 = new Subtask("Упаковать вещи", "Разложить вещи по коробкам.", epic1.getUid());
+        Subtask subtask2 = new Subtask("Перевезти вещи", "Увезти все вещи.", epic1.getUid());
+        Subtask subtask3 = new Subtask("Распаковать вещи", "Распаковать их.", epic1.getUid());
+        taskManager.createSubtask(subtask1);
+        taskManager.createSubtask(subtask2);
+        taskManager.createSubtask(subtask3);
 
+        Epic epic2 = new Epic("Пополнить запасы", "Сходить в магазин за продуктами.");
+        taskManager.createEpic(epic2);
+
+
+        System.out.println(taskManager.getEpicById(0));
+        System.out.println(taskManager.getEpicById(4));
+        System.out.println(taskManager.getSubtaskById(2));
+        System.out.println(taskManager.getEpicById(0));
+
+        System.out.println(taskManager.getHistory());
+        System.out.println(taskManager.getHistory());
+
+        taskManager.save();
+    }
+
+    static void testLoading() {
         TaskManager taskManager = loadFromFile(new File("TaskManager.csv"));
         System.out.println(taskManager.getHistory());
         System.out.println(taskManager.getSubtasks());
@@ -138,73 +146,73 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     public void save() {
         try (Writer fileWriter = new FileWriter("TaskManager.csv")) {
             fileWriter.write("id,type,name,status,description,epic \n");
-            fileWriter.write(getAllTasks());
+            fileWriter.write(CSVTaskFormat.getAllTasks(this));
             fileWriter.write("\n\n");
-            fileWriter.write(historyToString(getHistoryManager()));
+            fileWriter.write(CSVTaskFormat.historyToString(getHistoryManager()));
         } catch (IOException e) {
             throw new ManagerSaveException("Произошла ошибка!");
         }
 
     }
 
-    private String getAllTasks() {
-        String result = "";
+//    private String getAllTasks() {
+//        String result = "";
+//
+//        for (Task task : getTasks()) {
+//            result += task.toString() + "\n";
+//        }
+//
+//        for (Task task : getSubtasks()) {
+//            result += task.toString() + "\n";
+//        }
+//
+//        for (Task task : getEpics()) {
+//            result += task.toString() + "\n";
+//        }
+//
+//        return result;
+//    }
 
-        for (Task task : getTasks()) {
-            result += task.toString() + "\n";
-        }
+//    static private String historyToString(HistoryManager historyManager) {
+//        String result = "";
+//
+//        for (Task task : historyManager.getHistory()) {
+//            result += task.getUid() + ",";
+//        }
+//
+//        if (result.length() > 0) result = result.substring(0, result.length() - 1);
+//
+//        return result;
+//    }
 
-        for (Task task : getSubtasks()) {
-            result += task.toString() + "\n";
-        }
+//    private Task taskFromString(String taskString) {
+//        String[] taskStringArr = taskString.split(",");
+//
+//        switch (TaskType.valueOf(taskStringArr[1])) {
+//            case TASK:
+//                return new Task(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
+//                        taskStringArr[2], Status.valueOf(taskStringArr[3]), taskStringArr[4]);
+//            case SUBTASK:
+//                return new Subtask(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
+//                        taskStringArr[2], Status.valueOf(taskStringArr[3]), taskStringArr[4],
+//                        Integer.parseInt(taskStringArr[5]));
+//            case EPIC:
+//                return new Epic(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
+//                        taskStringArr[2], Status.valueOf(taskStringArr[3]), taskStringArr[4]);
+//        }
+//
+//        return null;
+//    }
 
-        for (Task task : getEpics()) {
-            result += task.toString() + "\n";
-        }
-
-        return result;
-    }
-
-    static private String historyToString(HistoryManager historyManager) {
-        String result = "";
-
-        for (Task task : historyManager.getHistory()) {
-            result += task.getUid() + ",";
-        }
-
-        if (result.length() > 0) result = result.substring(0, result.length() - 1);
-
-        return result;
-    }
-
-    private Task taskFromString(String taskString) {
-        String[] taskStringArr = taskString.split(",");
-
-        switch (TaskType.valueOf(taskStringArr[1])) {
-            case TASK:
-                return new Task(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
-                        taskStringArr[2], Status.valueOf(taskStringArr[3]), taskStringArr[4]);
-            case SUBTASK:
-                return new Subtask(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
-                        taskStringArr[2], Status.valueOf(taskStringArr[3]), taskStringArr[4],
-                        Integer.parseInt(taskStringArr[5]));
-            case EPIC:
-                return new Epic(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
-                        taskStringArr[2], Status.valueOf(taskStringArr[3]), taskStringArr[4]);
-        }
-
-        return null;
-    }
-
-    static ArrayList<Integer> historyFromString(String value) {
-        String[] valueArr = value.split(",");
-        ArrayList<Integer> result = new ArrayList<>();
-        for (String str : valueArr) {
-            result.add(Integer.parseInt(str));
-        }
-
-        return result;
-    }
+//    static ArrayList<Integer> historyFromString(String value) {
+//        String[] valueArr = value.split(",");
+//        ArrayList<Integer> result = new ArrayList<>();
+//        for (String str : valueArr) {
+//            result.add(Integer.parseInt(str));
+//        }
+//
+//        return result;
+//    }
 
 
     static FileBackedTasksManager loadFromFile(File file) {
@@ -221,10 +229,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
         for (int i = 1; i < lines.length; i++) {
             if (lines[i].isBlank()) break;
-            taskManager.loadTask(taskManager.taskFromString(lines[i]));
+            taskManager.loadTask(CSVTaskFormat.taskFromString(lines[i]));
         }
 
-        for (Integer id : historyFromString(lines[lines.length - 1])) {
+        for (Integer id : CSVTaskFormat.historyFromString(lines[lines.length - 1])) {
             if (taskManager.tasks.containsKey(id)) {
                 taskManager.historyManager.addTask(taskManager.tasks.get(id));
             } else if (taskManager.subtasks.containsKey(id)) {
