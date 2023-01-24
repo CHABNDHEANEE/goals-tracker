@@ -8,6 +8,8 @@ import task.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
@@ -43,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         taskManager.save();
     }
 
-    static void testLoading() {
+    public static void testLoading() {
         TaskManager taskManager = loadFromFile(new File("TaskManager.csv"));
         System.out.println(taskManager.getHistory());
         System.out.println(taskManager.getSubtasks());
@@ -129,7 +131,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    protected void setStatus(int uidOfEpic) {
+    public void setStatus(int uidOfEpic) {
         super.setStatus(uidOfEpic);
         save();
     }
@@ -146,6 +148,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
 
     }
+
 
     static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager taskManager = new FileBackedTasksManager();
@@ -164,15 +167,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             taskManager.loadTask(CSVTaskFormat.taskFromString(lines[i]));
         }
 
-        for (Integer id : CSVTaskFormat.historyFromString(lines[lines.length - 1])) {
-            if (taskManager.tasks.containsKey(id)) {
-                taskManager.historyManager.addTask(taskManager.tasks.get(id));
-            } else if (taskManager.subtasks.containsKey(id)) {
-                taskManager.historyManager.addTask(taskManager.subtasks.get(id));
-            } else if (taskManager.epics.containsKey(id)) {
-                taskManager.historyManager.addTask(taskManager.epics.get(id));
+        try {
+            for (Integer id : CSVTaskFormat.historyFromString(lines[lines.length - 1])) {
+                if (taskManager.tasks.containsKey(id)) {
+                    taskManager.historyManager.addTask(taskManager.tasks.get(id));
+                } else if (taskManager.subtasks.containsKey(id)) {
+                    taskManager.historyManager.addTask(taskManager.subtasks.get(id));
+                } else if (taskManager.epics.containsKey(id)) {
+                    taskManager.historyManager.addTask(taskManager.epics.get(id));
+                }
             }
-        }
+        } catch (Exception e) {} //Если нет истории, то не добавляем ее в новый файл.
 
         return taskManager;
     }
@@ -191,5 +196,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 break;
         }
 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        TaskManager item = (TaskManager) obj;
+        boolean equals = false;
+
+        if (getEpics().equals(item.getEpics())) {
+            if (Objects.equals(getSubtasks(), item.getSubtasks())) {
+                if (Objects.equals(getTasks(), item.getTasks())) {
+                        return true;
+                }
+            }
+        }
+        return false;
+//        return Objects.equals(getEpics(), item.getEpics())
+//                && Objects.equals(getSubtasks(), item.getSubtasks())
+//                && Objects.equals(getTasks(), item.getTasks());
     }
 }

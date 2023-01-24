@@ -57,6 +57,12 @@ public class InMemoryHistoryManager implements HistoryManager {
             boolean deleted = false;
 
             if (currNode == element) {
+                if (size == 1) {
+                    head = null;
+                    tail = null;
+                    size = 0;
+                    return;
+                }
                 head = head.next;
                 head.prev = null;
                 deleted = true;

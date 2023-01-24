@@ -1,10 +1,11 @@
 package manager;
 
+import manager.exception.DeletingWrongElementException;
 import task.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Task> tasks;
@@ -70,29 +71,32 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTaskById(Integer id) {
+        if (!tasks.containsKey(id)) throw new DeletingWrongElementException("Элемент не существует!");
         tasks.remove(id);
-        historyManager.remove(id);
+        if (historyManager.getHistory().contains(tasks.get(id))) historyManager.remove(id);
     }   // Удаляем таск по айди
 
     @Override
     public void deleteSubtaskById(Integer id) {
+        if (!subtasks.containsKey(id)) throw new DeletingWrongElementException("Элемент не существует!");
         Subtask subtask = subtasks.get(id);
         int uidOfEpic = subtask.getUidOfEpic();
         int uid = subtask.getUid();
         epics.get(uidOfEpic).deleteSubtask(uid);
         setStatus(uidOfEpic);  // Обновляем статус эпика
         subtasks.remove(id);
-        historyManager.remove(id);
+        if (historyManager.getHistory().contains(subtask)) historyManager.remove(id);
     }   // Удаляем сабтаск по айди
 
     @Override
     public void deleteEpicById(Integer id) {
+        if (!epics.containsKey(id)) throw new DeletingWrongElementException("Элемент не существует!");
         for (Task task : getAllSubtasksOfEpic(id)) {
             historyManager.remove(task.getUid());
             deleteSubtaskById(task.getUid());
         }
         epics.remove(id);
-        historyManager.remove(id);
+        if (historyManager.getHistory().contains(epics.get(id))) historyManager.remove(id);
     }   // Удаляем эпик по айди
 
     @Override
@@ -142,7 +146,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask subtask) {
         int uid = subtask.getUid();
         int uidOfEpic = subtask.getUidOfEpic();
-        if (!isSubtaskExists(uid) && !isEpicExists(uidOfEpic)) return;
+        if (!isSubtaskExists(uid) || !isEpicExists(uidOfEpic)) return;
         subtasks.put(uid, subtask);
         setStatus(uidOfEpic);    // Обновляем статус эпика
     }   // Обновляем сабтаск
@@ -176,7 +180,8 @@ public class InMemoryTaskManager implements TaskManager {
         return subtasks.containsKey(uid);
     }
 
-    protected void setStatus(int uidOfEpic) {
+    @Override
+    public void setStatus(int uidOfEpic) {
         Epic epic = epics.get(uidOfEpic);
         if (epic.getSubtasks().isEmpty()) {
             epic.setStatus("NEW");
@@ -187,9 +192,10 @@ public class InMemoryTaskManager implements TaskManager {
         boolean isDone = true;
 
         for (Subtask subtask : getAllSubtasksOfEpic(uidOfEpic)) {
-            if (subtask.getStatus().equals("NEW")) {
+            if (subtask.getStatus() != Status.NEW) {
                 isNew = false;
-            } else if (subtask.getStatus().equals("DONE")) {
+            }
+            if (subtask.getStatus() != Status.DONE) {
                 isDone = false;
             }
             if (!isNew && !isDone) break;

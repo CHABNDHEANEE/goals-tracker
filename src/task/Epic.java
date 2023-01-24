@@ -11,6 +11,7 @@ public class Epic extends Task{
 
     public Epic(int uid, TaskType taskType, String name, Status status, String description) {
         super(uid, taskType, name, status, description);
+        subtasksId = new ArrayList<>();
     }
 
     public Epic(String name, String description, int uid, String status) {
@@ -42,7 +43,9 @@ public class Epic extends Task{
     }
 
     @Override
-    public void setStatus(String newStatus) {}
+    public void setStatus(String status) {
+        this.status = Status.valueOf(status);
+    }
 
     @Override
     public boolean isEpic() {
