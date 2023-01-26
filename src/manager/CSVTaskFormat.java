@@ -13,39 +13,39 @@ import java.util.ArrayList;
 
 public class CSVTaskFormat {
 
-    static public DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd; HH:mm:ss");
+    static final public DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd; HH:mm:ss");
 
     CSVTaskFormat() {
         super();
     }
     static String getAllTasks(InMemoryTaskManager inMemoryTaskManager) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (Task task : inMemoryTaskManager.getTasks()) {
-            result += task.toString() + "\n";
+            result.append(task.toString()).append("\n");
         }
 
         for (Task task : inMemoryTaskManager.getSubtasks()) {
-            result += task.toString() + "\n";
+            result.append(task.toString()).append("\n");
         }
 
         for (Task task : inMemoryTaskManager.getEpics()) {
-            result += task.toString() + "\n";
+            result.append(task.toString()).append("\n");
         }
 
-        return result;
+        return result.toString();
     }
 
     static String historyToString(HistoryManager historyManager) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (Task task : historyManager.getHistory()) {
-            result += task.getUid() + ",";
+            result.append(task.getUid()).append(",");
         }
 
-        if (result.length() > 0) result = result.substring(0, result.length() - 1);
+        if (result.length() > 0) result = new StringBuilder(result.substring(0, result.length() - 1));
 
-        return result;
+        return result.toString();
     }
 
     static Task taskFromString(String taskString) {

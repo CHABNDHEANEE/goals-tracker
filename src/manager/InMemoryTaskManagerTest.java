@@ -6,8 +6,6 @@ import task.*;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     @BeforeEach
     void beforeEach() {
@@ -25,6 +23,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
         task1 = new Task("Task1", "creating task test 1", 60, LocalDateTime.now().plusHours(10));
         task2 = new Task("Task2", "creating task test 2", 100, LocalDateTime.now().plusHours(11));
+        task3 = new Task("Task3", "creating task test 3", 60, null);
+        task4 = new Task("Task4", "creating task test 4", 100, null);
+        task5 = new Task("Task5", "creating task test 5", 100, LocalDateTime.now().plusHours(10));
     }
 
 

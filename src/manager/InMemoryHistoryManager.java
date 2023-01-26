@@ -34,6 +34,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return history.getTasks();
     }
 
+    @SuppressWarnings("unchecked")
     static class CustomLinkedList<V> {
 
         public Node<V> head;

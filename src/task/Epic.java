@@ -5,12 +5,11 @@ import manager.TaskType;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Epic extends Task{
 
 
-    ArrayList<Integer> subtasksId;
+    final ArrayList<Integer> subtasksId;
     private LocalDateTime endTime;
     private Duration duration;
 
@@ -47,7 +46,7 @@ public class Epic extends Task{
     }
 
     public void deleteSubtask(int uid) {
-        subtasksId.remove(subtasksId.indexOf(uid));
+        subtasksId.remove((Integer) uid);
     }
 
     public void clearSubtasks() {
@@ -68,10 +67,10 @@ public class Epic extends Task{
     }
 
     private void calcStartTime(ArrayList<Subtask> subtasks) {
-        LocalDateTime newStartTime = subtasks.get(0).getStartTime();
+        LocalDateTime newStartTime = subtasks.get(0).getStartTimeNullSafe();
         for (Subtask task :
                 subtasks) {
-            if (newStartTime.isAfter(task.getStartTime())) newStartTime = task.getStartTime();
+            if (newStartTime.isAfter(task.getStartTimeNullSafe())) newStartTime = task.getStartTimeNullSafe();
         }
 
         startTime = newStartTime;
@@ -81,7 +80,7 @@ public class Epic extends Task{
         Duration newDuration = Duration.ofSeconds(0);
         for (Subtask task :
                 subtasks) {
-            newDuration.plus(task.getDuration());
+            newDuration = newDuration.plus(task.getDuration());
         }
         duration = newDuration;
     }

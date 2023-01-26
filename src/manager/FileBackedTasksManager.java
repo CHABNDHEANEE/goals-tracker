@@ -8,13 +8,9 @@ import task.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-
-    public static void main(String[] args) {
-    }
 
     FileBackedTasksManager() {
         super();
@@ -168,18 +164,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         TaskManager item = (TaskManager) obj;
-        boolean equals = false;
 
-        if (getEpics().equals(item.getEpics())) {
-            if (Objects.equals(getSubtasks(), item.getSubtasks())) {
-                if (Objects.equals(getTasks(), item.getTasks())) {
-                        return true;
-                }
-            }
-        }
-        return false;
-//        return Objects.equals(getEpics(), item.getEpics())
-//                && Objects.equals(getSubtasks(), item.getSubtasks())
-//                && Objects.equals(getTasks(), item.getTasks());
+        return Objects.equals(getEpics(), item.getEpics())
+                && Objects.equals(getSubtasks(), item.getSubtasks())
+                && Objects.equals(getTasks(), item.getTasks());
     }
 }

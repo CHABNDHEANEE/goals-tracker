@@ -3,7 +3,7 @@ package manager;
 import task.Task;
 
 public class Node<E> {
-    public Task data;
+    public final Task data;
     public Node<E> prev;
     public Node<E> next;
 

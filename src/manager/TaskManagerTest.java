@@ -1,6 +1,7 @@
 package manager;
 
 import manager.exception.DeletingWrongElementException;
+import manager.exception.OccupiedTimeIntervalException;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
@@ -17,6 +18,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
     Subtask subtask3;
     Task task1;
     Task task2;
+    Task task3;
+    Task task4;
+    Task task5;
 
     @Test
     void creatingTask() {
@@ -207,6 +211,32 @@ abstract class TaskManagerTest<T extends TaskManager> {
         createEpic(epic1);
         createSubtask(subtask1);
         assertEquals(0, subtask1.getUidOfEpic());
+    }
+
+    @Test
+    void checkSortingByDate() {
+        createTask(task2);
+        createTask(task1);
+        assertArrayEquals(new Task[]{task1, task2}, taskManager.getSortedSet().toArray());
+    }
+
+    @Test
+    void checkSortingByDateWithNulls() {
+        createTask(task3);
+        createTask(task2);
+        createTask(task4);
+        createTask(task1);
+        assertArrayEquals(new Task[]{task1, task2, task3, task4}, taskManager.getSortedSet().toArray());
+    }
+
+    @Test
+    void checkInterceptedTimeInterval() {
+        createTask(task1);
+        createTask(task2);
+        createTask(task3);
+        OccupiedTimeIntervalException exception =
+                assertThrows(OccupiedTimeIntervalException.class, () -> createTask(task5));
+        assertEquals("Данный временной интервал занят!", exception.getMessage());
     }
 
     private void createTask(Task task) {

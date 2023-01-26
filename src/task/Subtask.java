@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Subtask extends Task {
-    int uidOfEpic;
+    final int uidOfEpic;
 
     public Subtask(
             int uid, TaskType taskType, String name, Status status, LocalDateTime startTime,

@@ -5,8 +5,6 @@ import manager.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -14,7 +12,7 @@ public class Task {
     protected String description;
     protected int uid;
     protected Status status;
-    protected TaskType taskType;
+    protected final TaskType taskType;
     protected Duration duration;
     protected LocalDateTime startTime;
 
@@ -98,8 +96,12 @@ public class Task {
         return startTime.plusSeconds(duration.getSeconds());
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalDateTime getStartTimeNullSafe() {
         if (startTime == null) return LocalDateTime.MIN;
+        return startTime;
+    }
+
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
@@ -111,7 +113,7 @@ public class Task {
     @Override
     public String toString() {
         return getUid() + "," + taskType + "," + name + "," + status + "," + getDuration() + "," +
-                getStartTime().format(CSVTaskFormat.DATE_FORMAT) + "," +
+                getStartTimeNullSafe().format(CSVTaskFormat.DATE_FORMAT) + "," +
                 "," + description;
     }
 
