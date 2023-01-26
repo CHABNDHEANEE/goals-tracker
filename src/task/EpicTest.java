@@ -6,6 +6,7 @@ import manager.TaskType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +27,12 @@ class EpicTest {
         epic1 = new Epic("Переезд", "Заняться переездом.");
         taskManager.createEpic(epic1);
 
-        subtask1 = new Subtask("Упаковать вещи", "Разложить вещи по коробкам.", epic1.getUid());
-        subtask2 = new Subtask("Перевезти вещи", "Увезти все вещи.", epic1.getUid());
-        subtask3 = new Subtask("Распаковать вещи", "Распаковать их.", epic1.getUid());
+        subtask1 = new Subtask("Упаковать вещи", "Разложить вещи по коробкам.", epic1.getUid(),
+                60, LocalDateTime.now());
+        subtask2 = new Subtask("Перевезти вещи", "Увезти все вещи.", epic1.getUid(), 60,
+                LocalDateTime.now().plusHours(1));
+        subtask3 = new Subtask("Распаковать вещи", "Распаковать их.", epic1.getUid(), 50,
+                LocalDateTime.now().plusHours(2));
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
         taskManager.createSubtask(subtask3);

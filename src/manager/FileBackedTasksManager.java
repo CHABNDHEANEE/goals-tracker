@@ -16,41 +16,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     public static void main(String[] args) {
     }
 
-    static void testSaving() {
-        TaskManager taskManager = Managers.getDefaultWithSaves();
-
-
-        Epic epic1 = new Epic("Переезд", "Заняться переездом.");
-        taskManager.createEpic(epic1);
-
-        Subtask subtask1 = new Subtask("Упаковать вещи", "Разложить вещи по коробкам.", epic1.getUid());
-        Subtask subtask2 = new Subtask("Перевезти вещи", "Увезти все вещи.", epic1.getUid());
-        Subtask subtask3 = new Subtask("Распаковать вещи", "Распаковать их.", epic1.getUid());
-        taskManager.createSubtask(subtask1);
-        taskManager.createSubtask(subtask2);
-        taskManager.createSubtask(subtask3);
-
-        Epic epic2 = new Epic("Пополнить запасы", "Сходить в магазин за продуктами.");
-        taskManager.createEpic(epic2);
-
-
-        System.out.println(taskManager.getEpicById(0));
-        System.out.println(taskManager.getEpicById(4));
-        System.out.println(taskManager.getSubtaskById(2));
-        System.out.println(taskManager.getEpicById(0));
-
-        System.out.println(taskManager.getHistory());
-        System.out.println(taskManager.getHistory());
-
-        taskManager.save();
-    }
-
-    public static void testLoading() {
-        TaskManager taskManager = loadFromFile(new File("TaskManager.csv"));
-        System.out.println(taskManager.getHistory());
-        System.out.println(taskManager.getSubtasks());
-    }
-
     FileBackedTasksManager() {
         super();
     }
@@ -139,7 +104,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     public void save() {
         try (Writer fileWriter = new FileWriter("TaskManager.csv")) {
-            fileWriter.write("id,type,name,status,description,epic \n");
+            fileWriter.write("id,type,name,status,startTime,description,epic \n");
             fileWriter.write(CSVTaskFormat.getAllTasks(this));
             fileWriter.write("\n\n");
             fileWriter.write(CSVTaskFormat.historyToString(getHistoryManager()));

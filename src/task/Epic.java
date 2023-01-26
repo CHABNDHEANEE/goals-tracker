@@ -2,17 +2,29 @@ package task;
 
 import manager.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Epic extends Task{
 
 
     ArrayList<Integer> subtasksId;
+    private LocalDateTime endTime;
+    private Duration duration;
 
-    public Epic(int uid, TaskType taskType, String name, Status status, String description) {
+    public Epic(int uid, TaskType taskType, String name, Status status, LocalDateTime startTime,
+                String description) {
         super(uid, taskType, name, status, description);
         subtasksId = new ArrayList<>();
     }
+
+    public Epic(int uid, TaskType taskType, String name, Status status, Duration  duration, LocalDateTime startTime,
+                String description) {
+        super(uid, taskType, name, status, duration, startTime, description);
+        subtasksId = new ArrayList<>();
+    } //Конструктор для восстановления из сохранки
 
     public Epic(String name, String description, int uid, String status) {
         super(name, description, TaskType.EPIC);
@@ -40,6 +52,59 @@ public class Epic extends Task{
 
     public void clearSubtasks() {
         subtasksId.clear();
+        eraseDuration();
+        eraseStartTime();
+    }
+
+    public void updateTime(ArrayList<Subtask> subtasks) {
+        if (subtasks.isEmpty()) {
+            startTime = null;
+            duration = Duration.ofSeconds(0);
+            return;
+        }
+        calcStartTime(subtasks);
+        calcDuration(subtasks);
+        calcEndTime(subtasks);
+    }
+
+    private void calcStartTime(ArrayList<Subtask> subtasks) {
+        LocalDateTime newStartTime = subtasks.get(0).getStartTime();
+        for (Subtask task :
+                subtasks) {
+            if (newStartTime.isAfter(task.getStartTime())) newStartTime = task.getStartTime();
+        }
+
+        startTime = newStartTime;
+    }
+
+    private void calcDuration(ArrayList<Subtask> subtasks) {
+        Duration newDuration = Duration.ofSeconds(0);
+        for (Subtask task :
+                subtasks) {
+            newDuration.plus(task.getDuration());
+        }
+        duration = newDuration;
+    }
+
+    private void calcEndTime(ArrayList<Subtask> subtasks) {
+        LocalDateTime newEndTime = subtasks.get(0).getEndTime();
+        for (Subtask task :
+                subtasks) {
+            if (newEndTime.isBefore(task.getEndTime())) newEndTime = task.getEndTime();
+        }
+        endTime = newEndTime;
+    }
+
+    private void eraseStartTime() {
+        this.startTime = null;
+    }
+
+    private void eraseDuration() {
+        this.duration = Duration.ofSeconds(0);
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override

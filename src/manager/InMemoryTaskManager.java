@@ -36,8 +36,10 @@ public class InMemoryTaskManager implements TaskManager {
         Integer uidOfEpic = subtask.getUidOfEpic(); // Получаем юид эпика
         if (!epics.containsKey(uidOfEpic)) return null;
         subtasks.put(uid, subtask); // добавляем сабтаск в список
-        epics.get(uidOfEpic).addSubtaskId(subtask);  // Привязываем сабтаск к эпику
+        Epic epic = epics.get(uidOfEpic);
+        epic.addSubtaskId(subtask);  // Привязываем сабтаск к эпику
         setStatus(uidOfEpic); // Обновляем статус эпика
+        epic.updateTime(getAllSubtasksOfEpic(uidOfEpic));
         return uid++; //Увеличиваем юид
     }   // Создаем сабтаск
 
@@ -83,6 +85,7 @@ public class InMemoryTaskManager implements TaskManager {
         int uidOfEpic = subtask.getUidOfEpic();
         int uid = subtask.getUid();
         epics.get(uidOfEpic).deleteSubtask(uid);
+        epics.get(uidOfEpic).updateTime(getAllSubtasksOfEpic(uidOfEpic));
         setStatus(uidOfEpic);  // Обновляем статус эпика
         subtasks.remove(id);
         if (historyManager.getHistory().contains(subtask)) historyManager.remove(id);

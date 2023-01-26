@@ -2,22 +2,41 @@ package task;
 
 import manager.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
     int uidOfEpic;
 
-    public Subtask(int uid, TaskType taskType, String name, Status status, String description, int uidOfEpic) {
+    public Subtask(
+            int uid, TaskType taskType, String name, Status status, LocalDateTime startTime,
+                   String description, int uidOfEpic
+                   ) {
         super(uid, taskType, name, status, description);
         this.uidOfEpic = uidOfEpic;
+        this.startTime = startTime;
     }
 
-    public Subtask(String name, String description, int uidOfEpic, String status) {
+    public Subtask(
+            int uid, TaskType taskType, String name, Status status, Duration duration, LocalDateTime startTime,
+            String description, int uidOfEpic
+    ) {
+        super(uid, taskType, name, status, duration, startTime, description);
+        this.uidOfEpic = uidOfEpic;
+    } //Конструктор для загрузки сохранки
+
+    public Subtask(String name, String description, int uidOfEpic, String status, int duration, LocalDateTime startTime) {
         super(name, description, TaskType.SUBTASK);
         this.uidOfEpic = uidOfEpic;
+        this.duration = Duration.ofSeconds(duration);
+        this.startTime = startTime;
     }
 
-    public Subtask(String name, String description, int uidOfEpic) {
+    public Subtask(String name, String description, int uidOfEpic, int duration, LocalDateTime startTime) {
         super(name, description, TaskType.SUBTASK);
         this.uidOfEpic = uidOfEpic;
+        this.duration = Duration.ofSeconds(duration);
+        this.startTime = startTime;
     }
 
     public int getUidOfEpic() {
