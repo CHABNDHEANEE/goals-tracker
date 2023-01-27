@@ -1,7 +1,6 @@
 package task;
 
-import manager.CSVTaskFormat;
-import manager.TaskType;
+import manager.fileBackedTaskManager.CSVTaskFormat;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

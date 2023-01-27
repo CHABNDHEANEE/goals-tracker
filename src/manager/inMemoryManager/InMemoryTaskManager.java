@@ -1,7 +1,11 @@
-package manager;
+package manager.inMemoryManager;
 
+import manager.CustomDateComparator;
+import manager.Managers;
+import manager.TaskManager;
 import manager.exception.DeletingWrongElementException;
 import manager.exception.OccupiedTimeIntervalException;
+import manager.historyManager.HistoryManager;
 import task.*;
 
 import java.time.Duration;
@@ -48,7 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void makeSortedSet() {
-        sortedSet = new TreeSet<>(new customDateComparator());
+        sortedSet = new TreeSet<>(new CustomDateComparator());
         sortedSet.addAll(tasks.values());
         sortedSet.addAll(subtasks.values());
     }

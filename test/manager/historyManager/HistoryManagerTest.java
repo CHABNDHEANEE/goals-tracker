@@ -1,5 +1,7 @@
-package manager;
+package manager.historyManager;
 
+import manager.Managers;
+import task.TaskType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Status;

@@ -1,5 +1,10 @@
 package manager;
 
+import manager.fileBackedTaskManager.FileBackedTasksManager;
+import manager.historyManager.HistoryManager;
+import manager.historyManager.InMemoryHistoryManager;
+import manager.inMemoryManager.InMemoryTaskManager;
+
 public class Managers {
 
     public static TaskManager getDefault() {

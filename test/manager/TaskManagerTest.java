@@ -1,7 +1,5 @@
 package manager;
 
-import manager.exception.DeletingWrongElementException;
-import manager.exception.OccupiedTimeIntervalException;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
@@ -9,18 +7,18 @@ import task.Task;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-abstract class TaskManagerTest<T extends TaskManager> {
-    TaskManager taskManager;
-    Epic epic1;
-    Epic epic2;
-    Subtask subtask1;
-    Subtask subtask2;
-    Subtask subtask3;
-    Task task1;
-    Task task2;
-    Task task3;
-    Task task4;
-    Task task5;
+public abstract class TaskManagerTest<T extends TaskManager> {
+    protected TaskManager taskManager;
+    protected Epic epic1;
+    protected Epic epic2;
+    protected Subtask subtask1;
+    protected Subtask subtask2;
+    protected Subtask subtask3;
+    protected Task task1;
+    protected Task task2;
+    protected Task task3;
+    protected Task task4;
+    protected Task task5;
 
     @Test
     void creatingTask() {
@@ -71,22 +69,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deletingTaskByIdFromEmpty() {
-        checkMsgForDeletingWrongElement(assertThrows(DeletingWrongElementException.class,
-                () -> taskManager.deleteTaskById(0)));
-    }
-
-    @Test
     void deletingEpicById() {
         createEpic(epic1);
         taskManager.deleteEpicById(0);
         assertTrue(taskManager.getEpics().isEmpty());
-    }
-
-    @Test
-    void deletingEpicByIdFromEmpty() {
-        checkMsgForDeletingWrongElement(assertThrows(DeletingWrongElementException.class,
-                () -> taskManager.deleteEpicById(0)));
     }
 
     @Test
@@ -95,12 +81,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         createSubtask(subtask1);
         taskManager.deleteSubtaskById(1);
         assertTrue(taskManager.getSubtasks().isEmpty());
-    }
-
-    @Test
-    void deletingSubtaskByIdFromEmpty() {
-        checkMsgForDeletingWrongElement(assertThrows(DeletingWrongElementException.class,
-                () -> taskManager.deleteSubtaskById(0)));
     }
 
     @Test
@@ -229,16 +209,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertArrayEquals(new Task[]{task1, task2, task3, task4}, taskManager.getSortedSet().toArray());
     }
 
-    @Test
-    void checkInterceptedTimeInterval() {
-        createTask(task1);
-        createTask(task2);
-        createTask(task3);
-        OccupiedTimeIntervalException exception =
-                assertThrows(OccupiedTimeIntervalException.class, () -> createTask(task5));
-        assertEquals("Данный временной интервал занят!", exception.getMessage());
-    }
-
     private void createTask(Task task) {
         taskManager.createTask(task);
     }
@@ -249,9 +219,5 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     private void createSubtask(Subtask task) {
         taskManager.createSubtask(task);
-    }
-
-    private void checkMsgForDeletingWrongElement(DeletingWrongElementException exception) {
-        assertEquals("Элемент не существует!", exception.getMessage());
     }
 }

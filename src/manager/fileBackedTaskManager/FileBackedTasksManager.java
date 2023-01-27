@@ -1,5 +1,8 @@
-package manager;
+package manager.fileBackedTaskManager;
 
+import manager.inMemoryManager.InMemoryTaskManager;
+import manager.TaskManager;
+import task.TaskType;
 import manager.exception.ManagerSaveException;
 import task.Epic;
 import task.Subtask;
@@ -12,7 +15,7 @@ import java.util.Objects;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
 
-    FileBackedTasksManager() {
+    public FileBackedTasksManager() {
         super();
     }
 
@@ -111,7 +114,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
 
-    static FileBackedTasksManager loadFromFile(File file) {
+    public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager taskManager = new FileBackedTasksManager();
         String strFile;
         try {

@@ -1,7 +1,5 @@
 package task;
 
-import manager.TaskType;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 
