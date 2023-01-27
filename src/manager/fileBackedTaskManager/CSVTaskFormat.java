@@ -18,9 +18,6 @@ public class CSVTaskFormat {
 
     static final public DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy.MM.dd; HH:mm:ss");
 
-    CSVTaskFormat() {
-        super();
-    }
     static String getAllTasks(InMemoryTaskManager inMemoryTaskManager) {
         StringBuilder result = new StringBuilder();
 
