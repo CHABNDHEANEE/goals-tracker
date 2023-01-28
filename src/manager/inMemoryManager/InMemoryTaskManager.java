@@ -22,6 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HistoryManager historyManager;
 
     protected TreeSet<Task> sortedSet;
+    protected ArrayList<Task> tasksWithNullTime;
 
 
     public InMemoryTaskManager() {
@@ -29,6 +30,8 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks = new HashMap<>();
         epics = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
+        tasksWithNullTime = new ArrayList<>();
+        sortedSet = new TreeSet<>(new CustomDateComparator());
         uid = 0;
     }
 
@@ -40,39 +43,46 @@ public class InMemoryTaskManager implements TaskManager {
 
         for (Task task :
                 getSortedSet()) {
-            if (task.getStartTime() == null || task.getUid() == taskWithTime.getUid()) {
-            }
-            else if ((task.getStartTime().isBefore(timeOfStart) &&
-                    task.getStartTime().plus(task.getDuration()).isAfter(timeOfStart)) ||
-                    (task.getStartTime().isAfter(timeOfStart) &&
-                            task.getStartTime().isBefore(timeOfStart.plus(duration)))) {
-                throw new OccupiedTimeIntervalException("Данный временной интервал занят!");
+
+            if (task.getStartTime() != null && task.getUid() != taskWithTime.getUid()) {
+                if ((task.getStartTime().isBefore(timeOfStart) &&
+                        task.getStartTime().plus(task.getDuration()).isAfter(timeOfStart)) ||
+                        (task.getStartTime().isAfter(timeOfStart) &&
+                                task.getStartTime().isBefore(timeOfStart.plus(duration)))) {
+                    throw new OccupiedTimeIntervalException("Данный временной интервал занят!");
+                }
             }
         }
     }
 
-    private void makeSortedSet() {
-        sortedSet = new TreeSet<>(new CustomDateComparator());
-        sortedSet.addAll(tasks.values());
-        sortedSet.addAll(subtasks.values());
+    private void addTaskToSortedSet(Task task) {
+        if (task.getStartTime() == null) tasksWithNullTime.add(task);
+        else sortedSet.add(task);
     }
 
-    private ArrayList<Task> getTasksWithoutTime() {
-        ArrayList<Task> result = new ArrayList<>();
+    private void deleteTaskFromSortedSet(Task task) {
+        if (task.getStartTime() == null) tasksWithNullTime.remove(task);
+        else sortedSet.remove(task);
+    }
 
+    private void deleteAllTasksFromSortedSet() {
         for (Task task :
                 tasks.values()) {
-            if (task.getStartTime() == null) result.add(task);
+            deleteTaskFromSortedSet(task);
         }
-        if (!result.isEmpty()) result.remove(0);
-        return result;
+    }
+
+    private void deleteAllSubtasksOfEpicFromSortedSet(int uid) {
+        for (Task task :
+                getAllSubtasksOfEpic(uid)) {
+            deleteTaskFromSortedSet(task);
+        }
     }
 
     @Override
     public ArrayList<Task> getSortedSet() {
-        makeSortedSet();
         ArrayList<Task> result = new ArrayList<>(sortedSet);
-        result.addAll(getTasksWithoutTime());
+        result.addAll(tasksWithNullTime);
         return result;
     }
 
@@ -81,6 +91,7 @@ public class InMemoryTaskManager implements TaskManager {
         checkIfTimeIntervalFree(task);
         task.setUid(uid);
         tasks.put(uid, task);
+        addTaskToSortedSet(task);
         return uid++;
     }   // Создаем таск
 
@@ -95,6 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.addSubtaskId(subtask);  // Привязываем сабтаск к эпику
         setStatus(uidOfEpic); // Обновляем статус эпика
         epic.updateTime(getAllSubtasksOfEpic(uidOfEpic));
+        addTaskToSortedSet(subtask);
         return uid++; // Увеличиваем юид
     }   // Создаем сабтаск
 
@@ -129,6 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskById(Integer id) {
         if (!tasks.containsKey(id)) throw new DeletingWrongElementException("Элемент не существует!");
+        deleteTaskFromSortedSet(tasks.get(id));
         tasks.remove(id);
         if (historyManager.getHistory().contains(tasks.get(id))) historyManager.remove(id);
     }   // Удаляем таск по айди
@@ -136,6 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubtaskById(Integer id) {
         if (!subtasks.containsKey(id)) throw new DeletingWrongElementException("Элемент не существует!");
+        deleteTaskFromSortedSet(subtasks.get(id));
         Subtask subtask = subtasks.get(id);
         int uidOfEpic = subtask.getUidOfEpic();
         int uid = subtask.getUid();
@@ -149,6 +163,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicById(Integer id) {
         if (!epics.containsKey(id)) throw new DeletingWrongElementException("Элемент не существует!");
+        deleteAllSubtasksOfEpicFromSortedSet(id);
         for (Task task : getAllSubtasksOfEpic(id)) {
             historyManager.remove(task.getUid());
             deleteSubtaskById(task.getUid());
@@ -199,6 +214,8 @@ public class InMemoryTaskManager implements TaskManager {
         int id = task.getUid();
         if (!isTaskExists(id)) return;
         tasks.put(id, task);
+        deleteTaskFromSortedSet(task);
+        addTaskToSortedSet(task);
     }   // Обновляем таск
 
     @Override
@@ -209,6 +226,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (!isSubtaskExists(uid) || isEpicExists(uidOfEpic)) return;
         subtasks.put(uid, subtask);
         setStatus(uidOfEpic);    // Обновляем статус эпика
+        deleteTaskFromSortedSet(subtask);
+        addTaskToSortedSet(subtask);
     }   // Обновляем сабтаск
 
     @Override
