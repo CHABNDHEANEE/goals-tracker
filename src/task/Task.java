@@ -2,7 +2,6 @@ package task;
 
 import manager.fileBackedTaskManager.CSVTaskFormat;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -105,7 +104,6 @@ public class Task {
     }
 
     public int getDuration() {
-//        if (duration == null) return Duration.ofSeconds(0);
         return duration;
     }
 

@@ -22,8 +22,8 @@ public class InMemoryTaskManager implements TaskManager {
     private Integer uid;
     protected final HistoryManager historyManager;
 
-    protected TreeSet<Task> sortedSet;
-    protected ArrayList<Task> tasksWithNullTime;
+    protected final TreeSet<Task> sortedSet;
+    protected final ArrayList<Task> tasksWithNullTime;
 
 
     public InMemoryTaskManager() {
