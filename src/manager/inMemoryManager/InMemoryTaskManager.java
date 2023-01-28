@@ -10,6 +10,7 @@ import task.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeSet;
@@ -37,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void checkIfTimeIntervalFree(Task taskWithTime) {
         LocalDateTime timeOfStart = taskWithTime.getStartTime();
-        Duration duration = taskWithTime.getDuration();
+        Duration duration = Duration.of(taskWithTime.getDuration(), ChronoUnit.MINUTES);
 
         if (timeOfStart == null) return;
 
@@ -46,7 +47,7 @@ public class InMemoryTaskManager implements TaskManager {
 
             if (task.getStartTime() != null && task.getUid() != taskWithTime.getUid()) {
                 if ((task.getStartTime().isBefore(timeOfStart) &&
-                        task.getStartTime().plus(task.getDuration()).isAfter(timeOfStart)) ||
+                        task.getStartTime().plus(Duration.of(task.getDuration(), ChronoUnit.MINUTES)).isAfter(timeOfStart)) ||
                         (task.getStartTime().isAfter(timeOfStart) &&
                                 task.getStartTime().isBefore(timeOfStart.plus(duration)))) {
                     throw new OccupiedTimeIntervalException("Данный временной интервал занят!");

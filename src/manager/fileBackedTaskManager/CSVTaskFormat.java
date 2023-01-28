@@ -54,14 +54,14 @@ public class CSVTaskFormat {
         switch (TaskType.valueOf(taskStringArr[1])) {
             case TASK:
                 return new Task(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
-                        taskStringArr[2], Status.valueOf(taskStringArr[3]), Duration.parse(taskStringArr[4]),
+                        taskStringArr[2], Status.valueOf(taskStringArr[3]), Integer.parseInt(taskStringArr[4]),
                         LocalDateTime.parse(taskStringArr[5], DATE_FORMAT), taskStringArr[7]);
             case SUBTASK:
                 return new Subtask(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
-                        taskStringArr[2], Status.valueOf(taskStringArr[3]), Duration.parse(taskStringArr[4]), LocalDateTime.parse(taskStringArr[5], DATE_FORMAT), taskStringArr[7], Integer.parseInt(taskStringArr[8]));
+                        taskStringArr[2], Status.valueOf(taskStringArr[3]), Integer.parseInt(taskStringArr[4]), LocalDateTime.parse(taskStringArr[5], DATE_FORMAT), taskStringArr[7], Integer.parseInt(taskStringArr[8]));
             case EPIC:
                 return new Epic(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
-                        taskStringArr[2], Status.valueOf(taskStringArr[3]), Duration.parse(taskStringArr[4]),
+                        taskStringArr[2], Status.valueOf(taskStringArr[3]), Integer.parseInt(taskStringArr[4]),
                         getStartDateForEpic(taskStringArr[5]), taskStringArr[7]);
         }
 

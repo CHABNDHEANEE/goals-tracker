@@ -17,7 +17,7 @@ public class Epic extends Task{
         subtasksId = new ArrayList<>();
     }
 
-    public Epic(int uid, TaskType taskType, String name, Status status, Duration  duration, LocalDateTime startTime,
+    public Epic(int uid, TaskType taskType, String name, Status status, int  duration, LocalDateTime startTime,
                 String description) {
         super(uid, taskType, name, status, duration, startTime, description);
         subtasksId = new ArrayList<>();
@@ -78,7 +78,7 @@ public class Epic extends Task{
         Duration newDuration = Duration.ofSeconds(0);
         for (Subtask task :
                 subtasks) {
-            newDuration = newDuration.plus(task.getDuration());
+            newDuration = newDuration.plus(Duration.ofMinutes(task.getDuration()));
         }
         duration = newDuration;
     }
