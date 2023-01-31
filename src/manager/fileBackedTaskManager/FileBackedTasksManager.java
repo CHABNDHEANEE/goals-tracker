@@ -19,6 +19,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         super();
     }
 
+    private void createSortedSetAfterLoading() {
+        sortedSet.addAll(tasks.values());
+        sortedSet.addAll(subtasks.values());
+    }
+
     @Override
     public Integer createTask(Task task) {
         super.createTask(task);
@@ -142,6 +147,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 }
             }
         } catch (Exception e) {} //Если нет истории, то не добавляем ее в новый файл.
+
+        taskManager.createSortedSetAfterLoading();
 
         return taskManager;
     }

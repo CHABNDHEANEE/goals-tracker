@@ -1,7 +1,5 @@
 package task;
 
-import manager.fileBackedTaskManager.CSVTaskFormat;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -11,7 +9,7 @@ public class Task {
     protected int uid;
     protected Status status;
     protected final TaskType taskType;
-    protected int duration;
+    protected long duration;
     protected LocalDateTime startTime;
 
     public Task(int uid, TaskType taskType, String name, Status status, String description) {
@@ -22,7 +20,7 @@ public class Task {
         this.description = description;
     }
 
-    public Task(int uid, TaskType taskType, String name, Status status, int duration, LocalDateTime startTime,
+    public Task(int uid, TaskType taskType, String name, Status status, long duration, LocalDateTime startTime,
                 String description) {
         this.uid = uid;
         this.taskType = taskType;
@@ -30,6 +28,7 @@ public class Task {
         this.status = status;
         this.description = description;
         this.duration = duration;
+        this.startTime = startTime;
     } // Конструктор для восстановления из файла сохранения
 
     public Task(String name, String description, TaskType taskType) {
@@ -40,7 +39,7 @@ public class Task {
         this.taskType = taskType;
     }
 
-    public Task(String name, String description, int duration, LocalDateTime startTime) {
+    public Task(String name, String description, long duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.uid = 0;
@@ -103,14 +102,14 @@ public class Task {
         return startTime;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
     @Override
     public String toString() {
         return getUid() + "," + taskType + "," + name + "," + status + "," + getDuration() + "," +
-                getStartTimeNullSafe().format(CSVTaskFormat.DATE_FORMAT) + "," +
+                getStartTime() + "," +
                 "," + description;
     }
 
@@ -120,6 +119,6 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         return uid == task.uid && Objects.equals(name, task.name) && Objects.equals(description, task.description) &&
-                Objects.equals(status, task.status);
+                Objects.equals(status, task.status) && Objects.equals(getStartTime(), task.getStartTime());
     }
 }

@@ -54,7 +54,7 @@ public class CSVTaskFormat {
             case TASK:
                 return new Task(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
                         taskStringArr[2], Status.valueOf(taskStringArr[3]), Integer.parseInt(taskStringArr[4]),
-                        LocalDateTime.parse(taskStringArr[5], DATE_FORMAT), taskStringArr[7]);
+                        LocalDateTime.parse(taskStringArr[5]), taskStringArr[7]);
             case SUBTASK:
                 return new Subtask(Integer.parseInt(taskStringArr[0]), TaskType.valueOf(taskStringArr[1]),
                         taskStringArr[2], Status.valueOf(taskStringArr[3]), Integer.parseInt(taskStringArr[4]), LocalDateTime.parse(taskStringArr[5], DATE_FORMAT), taskStringArr[7], Integer.parseInt(taskStringArr[8]));

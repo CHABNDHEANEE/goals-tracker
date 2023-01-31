@@ -1,6 +1,5 @@
 package manager.inMemoryManager;
 
-import manager.CustomDateComparator;
 import manager.Managers;
 import manager.TaskManager;
 import manager.exception.DeletingWrongElementException;
@@ -11,11 +10,14 @@ import task.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
+
+import static java.util.Comparator.*;
 
 public class InMemoryTaskManager implements TaskManager {
+    private final static Comparator<Task> dateDescComparator =
+            comparing(Task::getStartTime, nullsLast(naturalOrder())).thenComparing(Task::getUid);
+
     protected final HashMap<Integer, Task> tasks;
     protected final HashMap<Integer, Subtask> subtasks;
     protected final HashMap<Integer, Epic> epics;
@@ -23,7 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HistoryManager historyManager;
 
     protected final TreeSet<Task> sortedSet;
-    protected final ArrayList<Task> tasksWithNullTime;
 
 
     public InMemoryTaskManager() {
@@ -31,8 +32,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks = new HashMap<>();
         epics = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
-        tasksWithNullTime = new ArrayList<>();
-        sortedSet = new TreeSet<>(new CustomDateComparator());
+        sortedSet = new TreeSet<>(dateDescComparator);
         uid = 0;
     }
 
@@ -43,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (timeOfStart == null) return;
 
         for (Task task :
-                getSortedSet()) {
+                sortedSet) {
 
             if (task.getStartTime() != null && task.getUid() != taskWithTime.getUid()) {
                 if ((task.getStartTime().isBefore(timeOfStart) &&
@@ -57,20 +57,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addTaskToSortedSet(Task task) {
-        if (task.getStartTime() == null) tasksWithNullTime.add(task);
-        else sortedSet.add(task);
+        sortedSet.add(task);
     }
 
     private void deleteTaskFromSortedSet(Task task) {
-        if (task.getStartTime() == null) tasksWithNullTime.remove(task);
-        else sortedSet.remove(task);
-    }
-
-    private void deleteAllTasksFromSortedSet() {
-        for (Task task :
-                tasks.values()) {
-            deleteTaskFromSortedSet(task);
-        }
+        sortedSet.remove(task);
     }
 
     private void deleteAllSubtasksOfEpicFromSortedSet(int uid) {
@@ -81,10 +72,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getSortedSet() {
-        ArrayList<Task> result = new ArrayList<>(sortedSet);
-        result.addAll(tasksWithNullTime);
-        return result;
+    public TreeSet getSortedSet() {
+        return sortedSet;
     }
 
     @Override

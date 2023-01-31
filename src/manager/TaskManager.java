@@ -5,6 +5,7 @@ import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -52,5 +53,5 @@ public interface TaskManager {
 
     void save();
 
-    ArrayList<Task> getSortedSet();
+    TreeSet getSortedSet();
 }
