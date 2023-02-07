@@ -8,5 +8,5 @@ public enum Endpoint {
     DELETE_TASK_BY_ID,
     GET_SUBTASKS_OF_EPIC,
 
-    WRONG_ENDPOINT;
+    WRONG_ENDPOINT
 }

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    KVServer server = new KVServer();
+    final KVServer server = new KVServer();
 
     InMemoryTaskManagerTest() throws IOException {
     }

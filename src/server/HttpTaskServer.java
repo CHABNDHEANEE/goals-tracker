@@ -6,7 +6,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import manager.Managers;
 import manager.TaskManager;
-import manager.fileBackedTaskManager.FileBackedTasksManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -38,6 +37,7 @@ public class HttpTaskServer {
     private void createEndPoints() {
         server.createContext("/tasks/task", new TaskHandler());
         server.createContext("/tasks/subtask", new SubtaskHandler());
+        server.createContext("/tasks/subtask/epic", new EpicRequestOfSubtasksHandler());
         server.createContext("/tasks/epic", new EpicHandler());
         server.createContext("/tasks/history", new HistoryHandler());
         server.createContext("/tasks", new PriorTasksHandler());
@@ -46,8 +46,8 @@ public class HttpTaskServer {
     private static Endpoint getEndpoint(String method, String query, String path) {
         switch (method) {
             case "GET":
-                if (query != null) return Endpoint.GET_TASK;
-                else if (path.contains("/tasks/subtask/epic")) return Endpoint.GET_SUBTASKS_OF_EPIC;
+                if (path.contains("/tasks/subtask/epic")) return Endpoint.GET_SUBTASKS_OF_EPIC;
+                else if (query != null) return Endpoint.GET_TASK;
                 else return Endpoint.GET_ALL_TASKS;
             case "POST":
                 return Endpoint.POST_TASK;
@@ -145,7 +145,7 @@ public class HttpTaskServer {
                 case POST_TASK:
                     Subtask task = gson.fromJson(new String(exchange.getRequestBody().readAllBytes(),
                             StandardCharsets.UTF_8), Subtask.class);
-                    tasksManager.createTask(task);
+                    tasksManager.createSubtask(task);
 
                     exchange.sendResponseHeaders(200, -1);
                     break;
@@ -197,7 +197,7 @@ public class HttpTaskServer {
                 case POST_TASK:
                     Epic task = gson.fromJson(new String(exchange.getRequestBody().readAllBytes(),
                             StandardCharsets.UTF_8), Epic.class);
-                    tasksManager.createTask(task);
+                    tasksManager.createEpic(task);
 
                     exchange.sendResponseHeaders(200, -1);
                     break;
@@ -213,15 +213,22 @@ public class HttpTaskServer {
 
                     exchange.sendResponseHeaders(200, -1);
                     break;
-                case GET_SUBTASKS_OF_EPIC:
-                    id = Integer.parseInt(path.split("=")[1]);
-                    response = gson.toJson(tasksManager.getAllSubtasksOfEpic(id));
+            }
+        }
+    }
 
-                    exchange.sendResponseHeaders(200, 0);
+    private class EpicRequestOfSubtasksHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            String path = exchange.getRequestURI().getQuery();
 
-                    try (OutputStream os = exchange.getResponseBody()) {
-                        os.write(response.getBytes());
-                    }
+            int id = Integer.parseInt(path.split("=")[1]);
+            String response = gson.toJson(tasksManager.getAllSubtasksOfEpic(id));
+
+            exchange.sendResponseHeaders(200, 0);
+
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
             }
         }
     }
@@ -250,5 +257,10 @@ public class HttpTaskServer {
                 os.write(response.getBytes());
             }
         }
+    }
+
+    public void stop() {
+        server.stop(0);
+        System.out.println("Сервер успешно остановлен.");
     }
 }

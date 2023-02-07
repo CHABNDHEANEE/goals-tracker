@@ -79,34 +79,34 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Integer createTask(Task task) {
+    public void createTask(Task task) {
         checkIfTimeIntervalFree(task);
         task.setUid(uid);
         tasks.put(uid, task);
         addTaskToSortedSet(task);
-        return uid++;
+        uid++;
     }   // Создаем таск
 
     @Override
-    public Integer createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) {
         checkIfTimeIntervalFree(subtask);
         subtask.setUid(uid);    // Добавляем юид сабтаска
         int uidOfEpic = subtask.getUidOfEpic(); // Получаем юид эпика
-        if (!epics.containsKey(uidOfEpic)) return null;
+        if (!epics.containsKey(uidOfEpic)) return;
         subtasks.put(uid, subtask); // добавляем сабтаск в список
         Epic epic = epics.get(uidOfEpic);
         epic.addSubtaskId(subtask);  // Привязываем сабтаск к эпику
         setStatus(uidOfEpic); // Обновляем статус эпика
         epic.updateTime(getAllSubtasksOfEpic(uidOfEpic));
         addTaskToSortedSet(subtask);
-        return uid++; // Увеличиваем юид
+        uid++;
     }   // Создаем сабтаск
 
     @Override
-    public Integer createEpic(Epic epic) {
+    public void createEpic(Epic epic) {
         epic.setUid(uid);
         epics.put(uid, epic);
-        return uid++;
+        uid++;
     }   // Создаем эпик
 
     @Override

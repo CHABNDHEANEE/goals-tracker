@@ -1,8 +1,5 @@
 package server;
 
-import com.google.gson.Gson;
-import manager.serverTaskManager.HttpTaskManager;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -10,9 +7,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-    private URI serverURL;
+    private final URI serverURL;
     private String token;
-    Gson gson = new Gson();
 
 
     public KVTaskClient(URI serverURL) {
@@ -22,15 +18,6 @@ public class KVTaskClient {
         } catch (Exception e) {
             System.out.println("Ошибка!");
         }
-    }
-
-    public HttpTaskManager getTaskManager() {
-        String load = null;
-        try {
-            load = load("1");
-        } catch (Exception e) {}
-        if (load == null) return new HttpTaskManager(serverURL.toString());
-        return gson.fromJson(load, HttpTaskManager.class);
     }
 
     public void put(String key, String json) throws IOException, InterruptedException {

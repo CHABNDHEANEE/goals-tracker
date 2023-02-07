@@ -85,10 +85,6 @@ public class Task {
         return status;
     }
 
-    public boolean isEpic() {
-        return false;
-    }
-
     public LocalDateTime getEndTime() {
         return startTime.plusMinutes(duration);
     }

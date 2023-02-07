@@ -25,24 +25,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public Integer createTask(Task task) {
+    public void createTask(Task task) {
         super.createTask(task);
         save();
-        return task.getUid();
     }
 
     @Override
-    public Integer createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) {
         super.createSubtask(subtask);
         save();
-        return subtask.getUid();
     }
 
     @Override
-    public Integer createEpic(Epic epic) {
+    public void createEpic(Epic epic) {
         super.createEpic(epic);
         save();
-        return epic.getUid();
     }
 
     @Override
