@@ -54,4 +54,6 @@ public interface TaskManager {
     void save();
 
     TreeSet getSortedSet();
+
+    TaskManager load();
 }

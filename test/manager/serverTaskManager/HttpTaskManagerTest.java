@@ -1,19 +1,27 @@
-package manager.inMemoryManager;
+package manager.serverTaskManager;
 
+import com.google.gson.Gson;
 import manager.Managers;
+import manager.TaskManager;
 import manager.TaskManagerTest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import server.KVServer;
-import task.*;
-
+import server.KVTaskClient;
+import task.Epic;
+import task.Subtask;
+import task.Task;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class HttpTaskManagerTest extends TaskManagerTest {
     KVServer server = new KVServer();
 
-    InMemoryTaskManagerTest() throws IOException {
+    HttpTaskManagerTest() throws IOException {
     }
 
     @BeforeEach
@@ -43,4 +51,41 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         server.stop();
     }
 
+    @Test
+    void testSavingWithElementsListAndWithoutHistory() {
+        taskManager.createTask(task1);
+        taskManager.createTask(task2);
+        taskManager.save();
+
+        TaskManager loaded = taskManager.load();
+        assertEquals(taskManager, loaded);
+    }
+
+    @Test
+    void testSavingWithElementsAndHistory() {
+        taskManager.createTask(task1);
+        taskManager.createTask(task2);
+        taskManager.getTaskById(0);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(0);
+
+        TaskManager loaded = taskManager.load();
+        assertEquals(taskManager, loaded);
+    }
+
+    @Test
+    void testSavingWithEpicWithoutSubtasks() {
+        taskManager.createEpic(epic1);
+        taskManager.save();
+
+        TaskManager loaded = taskManager.load();
+        assertEquals(taskManager, loaded);
+    }
+
+    @Test
+    void testSavingEmptyList() {
+        taskManager.save();
+        TaskManager loaded = taskManager.load();
+        assertEquals(taskManager, loaded);
+    }
 }

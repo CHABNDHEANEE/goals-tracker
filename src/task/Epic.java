@@ -9,7 +9,7 @@ public class Epic extends Task{
 
     final ArrayList<Integer> subtasksId;
     private LocalDateTime endTime;
-    private Duration duration;
+    private Duration epicDuration;
 
     public Epic(int uid, TaskType taskType, String name, Status status, LocalDateTime startTime,
                 String description) {
@@ -56,7 +56,7 @@ public class Epic extends Task{
     public void updateTime(ArrayList<Subtask> subtasks) {
         if (subtasks.isEmpty()) {
             startTime = null;
-            duration = Duration.ofSeconds(0);
+            epicDuration = Duration.ofSeconds(0);
             return;
         }
         calcStartTime(subtasks);
@@ -80,7 +80,7 @@ public class Epic extends Task{
                 subtasks) {
             newDuration = newDuration.plus(Duration.ofMinutes(task.getDuration()));
         }
-        duration = newDuration;
+        epicDuration = newDuration;
     }
 
     private void calcEndTime(ArrayList<Subtask> subtasks) {
@@ -97,7 +97,7 @@ public class Epic extends Task{
     }
 
     private void eraseDuration() {
-        this.duration = Duration.ofSeconds(0);
+        this.epicDuration = Duration.ofSeconds(0);
     }
 
     public LocalDateTime getEndTime() {

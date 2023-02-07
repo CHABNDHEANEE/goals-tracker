@@ -179,4 +179,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 && Objects.equals(getSubtasks(), item.getSubtasks())
                 && Objects.equals(getTasks(), item.getTasks());
     }
+
+    @Override
+    public TaskManager load() { return null; }
 }

@@ -1,10 +1,12 @@
 package manager.inMemoryManager;
 
+
 import manager.Managers;
 import manager.TaskManager;
 import manager.exception.DeletingWrongElementException;
 import manager.exception.OccupiedTimeIntervalException;
 import manager.historyManager.HistoryManager;
+import manager.historyManager.InMemoryHistoryManager;
 import task.*;
 
 import java.time.Duration;
@@ -22,9 +24,9 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Subtask> subtasks;
     protected final HashMap<Integer, Epic> epics;
     private Integer uid;
-    protected final HistoryManager historyManager;
+    protected final InMemoryHistoryManager historyManager;
 
-    protected final TreeSet<Task> sortedSet;
+    protected transient final TreeSet<Task> sortedSet;
 
 
     public InMemoryTaskManager() {
@@ -290,4 +292,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void save() {}
+
+    @Override
+    public TaskManager load() { return null; }
 }

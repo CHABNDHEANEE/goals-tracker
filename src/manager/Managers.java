@@ -4,14 +4,15 @@ import manager.fileBackedTaskManager.FileBackedTasksManager;
 import manager.historyManager.HistoryManager;
 import manager.historyManager.InMemoryHistoryManager;
 import manager.inMemoryManager.InMemoryTaskManager;
+import manager.serverTaskManager.HttpTaskManager;
 
 public class Managers {
 
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+        return new HttpTaskManager("http://localhost:8080/");
     }
 
-    public static HistoryManager getDefaultHistory() {
+    public static InMemoryHistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
 
