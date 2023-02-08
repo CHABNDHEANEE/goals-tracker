@@ -1,6 +1,5 @@
 package manager.serverTaskManager;
 
-import com.google.gson.Gson;
 import manager.Managers;
 import manager.TaskManager;
 import manager.TaskManagerTest;
@@ -8,7 +7,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.KVServer;
-import server.KVTaskClient;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -25,7 +23,7 @@ public class HttpTaskManagerTest extends TaskManagerTest {
     }
 
     @BeforeEach
-    void beforeEach() throws IOException {
+    void beforeEach() {
         server.start();
         taskManager = Managers.getDefault();
         epic1 = new Epic("Переезд", "Заняться переездом.");
@@ -47,7 +45,7 @@ public class HttpTaskManagerTest extends TaskManagerTest {
     }
 
     @AfterEach
-    void afterEach() throws IOException {
+    void afterEach() {
         server.stop();
     }
 
