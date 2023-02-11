@@ -16,9 +16,8 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
 public class HttpTaskServer {
-    private final Gson gson = new Gson();
     private static final int PORT = 8080;
-
+    private final Gson gson = new Gson();
     TaskManager tasksManager;
 
     HttpServer server;
@@ -34,6 +33,29 @@ public class HttpTaskServer {
         }
     }
 
+    private static Endpoint getEndpoint(String method, String query, String path) {
+        switch (method) {
+            case "GET":
+                if (path.contains("/tasks/subtask/epic")) {
+                    return Endpoint.GET_SUBTASKS_OF_EPIC;
+                } else if (query != null) {
+                    return Endpoint.GET_TASK;
+                } else {
+                    return Endpoint.GET_ALL_TASKS;
+                }
+            case "POST":
+                return Endpoint.POST_TASK;
+            case "DELETE":
+                if (query != null) {
+                    return Endpoint.DELETE_TASK_BY_ID;
+                } else {
+                    return Endpoint.DELETE_ALL_TASKS;
+                }
+            default:
+                return Endpoint.WRONG_ENDPOINT;
+        }
+    }
+
     private void createEndPoints() {
         server.createContext("/tasks/task", new TaskHandler());
         server.createContext("/tasks/subtask", new SubtaskHandler());
@@ -43,30 +65,9 @@ public class HttpTaskServer {
         server.createContext("/tasks", new PriorTasksHandler());
     }
 
-    private static Endpoint getEndpoint(String method, String query, String path) {
-        switch (method) {
-            case "GET":
-                if (path.contains("/tasks/subtask/epic")) {
-                    return Endpoint.GET_SUBTASKS_OF_EPIC;
-                }
-                else if (query != null) {
-                    return Endpoint.GET_TASK;
-                }
-                else {
-                    return Endpoint.GET_ALL_TASKS;
-                }
-            case "POST":
-                return Endpoint.POST_TASK;
-            case "DELETE":
-                if (query != null) {
-                    return Endpoint.DELETE_TASK_BY_ID;
-                }
-                else {
-                    return Endpoint.DELETE_ALL_TASKS;
-                }
-            default:
-                return Endpoint.WRONG_ENDPOINT;
-        }
+    public void stop() {
+        server.stop(0);
+        System.out.println("Сервер успешно остановлен.");
     }
 
     private class TaskHandler implements HttpHandler {
@@ -275,10 +276,5 @@ public class HttpTaskServer {
                 os.write(response.getBytes());
             }
         }
-    }
-
-    public void stop() {
-        server.stop(0);
-        System.out.println("Сервер успешно остановлен.");
     }
 }

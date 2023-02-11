@@ -7,8 +7,8 @@ public class Subtask extends Task {
 
     public Subtask(
             int uid, TaskType taskType, String name, Status status, LocalDateTime startTime,
-                   String description, int uidOfEpic
-                   ) {
+            String description, int uidOfEpic
+    ) {
         super(uid, taskType, name, status, description);
         this.uidOfEpic = uidOfEpic;
         this.startTime = startTime;

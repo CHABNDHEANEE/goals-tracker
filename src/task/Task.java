@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
+    protected final TaskType taskType;
     protected String name;
     protected String description;
     protected int uid;
     protected Status status;
-    protected final TaskType taskType;
     protected long duration;
     protected LocalDateTime startTime;
 
@@ -53,16 +53,12 @@ public class Task {
         return taskType;
     }
 
-    public void setStatus(String status) {
-        this.status = Status.valueOf(status);
+    public int getUid() {
+        return uid;
     }
 
     public void setUid(int uid) {
         this.uid = uid;
-    }
-
-    public int getUid() {
-        return uid;
     }
 
     public String getName() {
@@ -83,6 +79,10 @@ public class Task {
 
     public Status getStatus() {
         return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = Status.valueOf(status);
     }
 
     public LocalDateTime getEndTime() {

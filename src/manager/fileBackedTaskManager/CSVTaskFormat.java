@@ -2,11 +2,7 @@ package manager.fileBackedTaskManager;
 
 import manager.historyManager.HistoryManager;
 import manager.inMemoryManager.InMemoryTaskManager;
-import task.TaskType;
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+import task.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -70,7 +66,9 @@ public class CSVTaskFormat {
     static private LocalDateTime getStartDateForEpic(String date) {
         try {
             if (LocalDateTime.parse(date, DATE_FORMAT).equals(LocalDateTime.MIN)) return null;
-        } catch (DateTimeParseException exception) { return null; }
+        } catch (DateTimeParseException exception) {
+            return null;
+        }
         return LocalDateTime.parse(date, DATE_FORMAT);
     }
 

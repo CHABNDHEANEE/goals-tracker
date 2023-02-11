@@ -33,7 +33,7 @@ public class HttpTaskManager extends FileBackedTasksManager implements TaskManag
     public TaskManager load() {
         try {
             return gson.fromJson(client.load("1"), HttpTaskManager.class);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Ошибочка! Трейс:\n" + Arrays.toString(e.getStackTrace()));
         }
         return null;

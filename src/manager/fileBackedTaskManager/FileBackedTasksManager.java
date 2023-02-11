@@ -1,14 +1,17 @@
 package manager.fileBackedTaskManager;
 
-import manager.inMemoryManager.InMemoryTaskManager;
 import manager.TaskManager;
-import task.TaskType;
 import manager.exception.ManagerSaveException;
+import manager.inMemoryManager.InMemoryTaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+import task.TaskType;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -17,6 +20,41 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     public FileBackedTasksManager() {
         super();
+    }
+
+    public static FileBackedTasksManager loadFromFile(File file) {
+        FileBackedTasksManager taskManager = new FileBackedTasksManager();
+        String strFile;
+        try {
+            strFile = Files.readString(Path.of(file.toURI()));
+        } catch (IOException e) {
+            System.out.println("Ошибка!");
+            strFile = "";
+        }
+
+        String[] lines = strFile.split("\n");
+
+        for (int i = 1; i < lines.length; i++) {
+            if (lines[i].isBlank()) break;
+            taskManager.loadTask(CSVTaskFormat.taskFromString(lines[i]));
+        }
+
+        try {
+            for (Integer id : CSVTaskFormat.historyFromString(lines[lines.length - 1])) {
+                if (taskManager.tasks.containsKey(id)) {
+                    taskManager.historyManager.addTask(taskManager.tasks.get(id));
+                } else if (taskManager.subtasks.containsKey(id)) {
+                    taskManager.historyManager.addTask(taskManager.subtasks.get(id));
+                } else if (taskManager.epics.containsKey(id)) {
+                    taskManager.historyManager.addTask(taskManager.epics.get(id));
+                }
+            }
+        } catch (Exception e) {
+        } //Если нет истории, то не добавляем ее в новый файл.
+
+        taskManager.createSortedSetAfterLoading();
+
+        return taskManager;
     }
 
     private void createSortedSetAfterLoading() {
@@ -102,7 +140,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         save();
     }
 
-
     public void save() {
         try (Writer fileWriter = new FileWriter("TaskManager.csv")) {
             fileWriter.write("id,type,name,status,startTime,description,epic \n");
@@ -113,41 +150,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             throw new ManagerSaveException("Произошла ошибка!");
         }
 
-    }
-
-
-    public static FileBackedTasksManager loadFromFile(File file) {
-        FileBackedTasksManager taskManager = new FileBackedTasksManager();
-        String strFile;
-        try {
-            strFile = Files.readString(Path.of(file.toURI()));
-        } catch (IOException e) {
-            System.out.println("Ошибка!");
-            strFile = "";
-        }
-
-        String[] lines = strFile.split("\n");
-
-        for (int i = 1; i < lines.length; i++) {
-            if (lines[i].isBlank()) break;
-            taskManager.loadTask(CSVTaskFormat.taskFromString(lines[i]));
-        }
-
-        try {
-            for (Integer id : CSVTaskFormat.historyFromString(lines[lines.length - 1])) {
-                if (taskManager.tasks.containsKey(id)) {
-                    taskManager.historyManager.addTask(taskManager.tasks.get(id));
-                } else if (taskManager.subtasks.containsKey(id)) {
-                    taskManager.historyManager.addTask(taskManager.subtasks.get(id));
-                } else if (taskManager.epics.containsKey(id)) {
-                    taskManager.historyManager.addTask(taskManager.epics.get(id));
-                }
-            }
-        } catch (Exception e) {} //Если нет истории, то не добавляем ее в новый файл.
-
-        taskManager.createSortedSetAfterLoading();
-
-        return taskManager;
     }
 
     public void loadTask(Task task) {
@@ -178,5 +180,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public TaskManager load() { return null; }
+    public TaskManager load() {
+        return null;
+    }
 }
