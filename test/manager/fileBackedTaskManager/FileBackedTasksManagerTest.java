@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
+    protected FileBackedTasksManagerTest() {
+    }
+
     @BeforeEach
     void beforeEach() {
         taskManager = Managers.getDefaultWithSaves();

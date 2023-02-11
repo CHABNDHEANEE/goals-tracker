@@ -2,15 +2,17 @@ package task;
 
 import manager.Managers;
 import manager.TaskManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.KVServer;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
-
+    final KVServer server = Managers.getDefaultKVServer();
     TaskManager taskManager;
     Epic epic1;
     Epic epic2;
@@ -20,6 +22,7 @@ class EpicTest {
 
     @BeforeEach
     void beforeEach() {
+        server.start();
         taskManager = Managers.getDefault();
         epic1 = new Epic("Переезд", "Заняться переездом.");
         taskManager.createEpic(epic1);
@@ -36,6 +39,11 @@ class EpicTest {
 
         epic2 = new Epic("Пополнить запасы", "Сходить в магазин за продуктами.");
         taskManager.createEpic(epic2);
+    }
+
+    @AfterEach
+    void afterEach() {
+        server.stop();
     }
 
     @Test

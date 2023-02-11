@@ -5,8 +5,6 @@ import manager.historyManager.InMemoryHistoryManager;
 import manager.serverTaskManager.HttpTaskManager;
 import server.KVServer;
 
-import java.io.IOException;
-
 public class Managers {
 
     public static TaskManager getDefault() {
@@ -21,7 +19,7 @@ public class Managers {
         return new FileBackedTasksManager();
     }
 
-    public static KVServer getDefaultKVServer() throws IOException {
+    public static KVServer getDefaultKVServer() {
         return new KVServer();
     }
 }

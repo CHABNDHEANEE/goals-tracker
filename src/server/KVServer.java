@@ -2,6 +2,7 @@ package server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import manager.exception.KVServerException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,12 +18,17 @@ public class KVServer {
 	private final HttpServer server;
 	private final Map<String, String> data = new HashMap<>();
 
-	public KVServer() throws IOException {
-		apiToken = generateApiToken();
-		server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-		server.createContext("/register", this::register);
-		server.createContext("/save", this::save);
-		server.createContext("/load", this::load);
+	public KVServer() {
+		try {
+			apiToken = generateApiToken();
+			server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+			server.createContext("/register", this::register);
+			server.createContext("/save", this::save);
+			server.createContext("/load", this::load);
+		} catch (IOException e) {
+			throw new KVServerException("Произошла ошибка при инициализации сервера: " + e.getMessage());
+		}
+
 	}
 
 	public void start() {	//Запуск сервера
