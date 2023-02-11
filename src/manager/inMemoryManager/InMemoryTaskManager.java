@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final static Comparator<Task> dateDescComparator =
             comparing(Task::getStartTime, nullsLast(naturalOrder())).thenComparing(Task::getUid);
 
-    protected HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, Task> tasks;
     protected final HashMap<Integer, Subtask> subtasks;
     protected final HashMap<Integer, Epic> epics;
     private Integer uid;

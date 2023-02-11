@@ -5,12 +5,9 @@ import com.google.gson.GsonBuilder;
 import manager.TaskManager;
 import manager.fileBackedTaskManager.FileBackedTasksManager;
 import server.KVTaskClient;
-import task.Task;
 
-import java.io.*;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class HttpTaskManager extends FileBackedTasksManager implements TaskManager {
     private final static Gson gson = new GsonBuilder()
@@ -23,8 +20,6 @@ public class HttpTaskManager extends FileBackedTasksManager implements TaskManag
         URI serverURL = URI.create(url);
         client = new KVTaskClient(serverURL);
     }
-
-    public HttpTaskManager() {}
 
     @Override
     public void save() {

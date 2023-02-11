@@ -46,14 +46,24 @@ public class HttpTaskServer {
     private static Endpoint getEndpoint(String method, String query, String path) {
         switch (method) {
             case "GET":
-                if (path.contains("/tasks/subtask/epic")) return Endpoint.GET_SUBTASKS_OF_EPIC;
-                else if (query != null) return Endpoint.GET_TASK;
-                else return Endpoint.GET_ALL_TASKS;
+                if (path.contains("/tasks/subtask/epic")) {
+                    return Endpoint.GET_SUBTASKS_OF_EPIC;
+                }
+                else if (query != null) {
+                    return Endpoint.GET_TASK;
+                }
+                else {
+                    return Endpoint.GET_ALL_TASKS;
+                }
             case "POST":
                 return Endpoint.POST_TASK;
             case "DELETE":
-                if (query != null) return Endpoint.DELETE_TASK_BY_ID;
-                else return Endpoint.DELETE_ALL_TASKS;
+                if (query != null) {
+                    return Endpoint.DELETE_TASK_BY_ID;
+                }
+                else {
+                    return Endpoint.DELETE_ALL_TASKS;
+                }
             default:
                 return Endpoint.WRONG_ENDPOINT;
         }
@@ -108,6 +118,9 @@ public class HttpTaskServer {
                     tasksManager.deleteAllTasks();
 
                     exchange.sendResponseHeaders(200, -1);
+                    break;
+                case WRONG_ENDPOINT:
+                    exchange.sendResponseHeaders(405, -1);
             }
         }
     }
@@ -160,6 +173,9 @@ public class HttpTaskServer {
                     tasksManager.deleteAllSubtasks();
 
                     exchange.sendResponseHeaders(200, -1);
+                    break;
+                case WRONG_ENDPOINT:
+                    exchange.sendResponseHeaders(405, -1);
             }
         }
     }
@@ -213,6 +229,8 @@ public class HttpTaskServer {
 
                     exchange.sendResponseHeaders(200, -1);
                     break;
+                case WRONG_ENDPOINT:
+                    exchange.sendResponseHeaders(405, -1);
             }
         }
     }

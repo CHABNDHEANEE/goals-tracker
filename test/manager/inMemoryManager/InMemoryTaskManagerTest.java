@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    final KVServer server = new KVServer();
+    final KVServer server = Managers.getDefaultKVServer();
 
     InMemoryTaskManagerTest() throws IOException {
     }
 
     @BeforeEach
-    void beforeEach() throws IOException {
+    void beforeEach() {
         server.start();
         taskManager = Managers.getDefault();
         epic1 = new Epic("Переезд", "Заняться переездом.");
@@ -39,7 +39,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     }
 
     @AfterEach
-    void afterEach() throws IOException {
+    void afterEach() {
         server.stop();
     }
 
